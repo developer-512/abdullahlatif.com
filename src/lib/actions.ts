@@ -110,6 +110,52 @@ export async function deleteProject(id: string) {
   revalidatePath("/admin/projects");
 }
 
+// ─── Categories ───
+
+export async function createCategory(formData: FormData) {
+  await requireAuth();
+  const sb = getAdminClient();
+
+  const label = (formData.get("label") as string).trim();
+  const slug = (formData.get("slug") as string).trim();
+  const sortOrder = Number(formData.get("sort_order")) || 0;
+
+  if (!label || !slug) throw new Error("Label and slug are required");
+
+  const { error } = await sb.from("categories").insert({ label, slug, sort_order: sortOrder });
+  if (error) throw new Error(error.message);
+  revalidatePath("/");
+  revalidatePath("/admin/categories");
+}
+
+export async function updateCategory(id: string, formData: FormData) {
+  await requireAuth();
+  const sb = getAdminClient();
+
+  const label = (formData.get("label") as string).trim();
+  const slug = (formData.get("slug") as string).trim();
+  const sortOrder = Number(formData.get("sort_order")) || 0;
+
+  if (!label || !slug) throw new Error("Label and slug are required");
+
+  const { error } = await sb
+    .from("categories")
+    .update({ label, slug, sort_order: sortOrder })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/");
+  revalidatePath("/admin/categories");
+}
+
+export async function deleteCategory(id: string) {
+  await requireAuth();
+  const sb = getAdminClient();
+  const { error } = await sb.from("categories").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/");
+  revalidatePath("/admin/categories");
+}
+
 // ─── Stats ───
 
 export async function updateStats(stats: { id: string; value: number; label: string; suffix: string; detail: string }[]) {

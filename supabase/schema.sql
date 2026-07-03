@@ -47,6 +47,17 @@ create table if not exists site_settings (
 alter table site_settings enable row level security;
 create policy "Public read access" on site_settings for select using (true);
 
+-- Categories table
+create table if not exists categories (
+  id uuid default gen_random_uuid() primary key,
+  label text not null,
+  slug text unique not null,
+  sort_order int default 0
+);
+
+alter table categories enable row level security;
+create policy "Public read access" on categories for select using (true);
+
 -- Services table
 create table if not exists services (
   id uuid default gen_random_uuid() primary key,
@@ -105,6 +116,19 @@ insert into site_settings (key, value) values
   ('cta_heading', 'Ready to optimize your architectural stack?'),
   ('cta_description', 'Let''s coordinate an introductory technical review session to assess your current engineering infrastructure, ERP pain points, or upcoming AI integrations.'),
   ('cta_button_text', 'Book Architecture Consultation');
+
+-- ============================================================
+-- Seed default categories
+-- ============================================================
+
+insert into categories (label, slug, sort_order) values
+  ('AI', 'ai', 1),
+  ('Laravel / PHP', 'laravel-php', 2),
+  ('NextJS / React', 'nextjs-react', 3),
+  ('Custom Development', 'custom-dev', 4),
+  ('Mobile (Flutter Android + iOS)', 'mobile', 5),
+  ('B2B-ERP', 'b2b-erp', 6),
+  ('Shopify', 'shopify', 7);
 
 -- ============================================================
 -- Seed default services

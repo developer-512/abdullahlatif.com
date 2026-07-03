@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import ProjectForm from "@/components/admin/ProjectForm";
-import type { Project } from "@/types";
+import type { Project, Category } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +11,10 @@ export default async function EditProjectPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { data: project } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [{ data: project }, { data: categories }] = await Promise.all([
+    supabase.from("projects").select("*").eq("id", id).single(),
+    supabase.from("categories").select("*").order("sort_order"),
+  ]);
 
   if (!project) notFound();
 
@@ -27,7 +26,10 @@ export default async function EditProjectPage({
           // {(project as Project).title}
         </p>
       </div>
-      <ProjectForm project={project as Project} />
+      <ProjectForm
+        project={project as Project}
+        categories={(categories as Category[] | null) || []}
+      />
     </div>
   );
 }

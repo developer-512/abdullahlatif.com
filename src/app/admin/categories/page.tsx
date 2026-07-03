@@ -1,10 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import ProjectForm from "@/components/admin/ProjectForm";
 import type { Category } from "@/types";
+import CategoryManager from "@/components/admin/CategoryManager";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewProjectPage() {
+export default async function CategoriesPage() {
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
@@ -13,12 +13,14 @@ export default async function NewProjectPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">New Project</h1>
+        <h1 className="text-2xl font-bold text-white">Categories</h1>
         <p className="text-sm text-zinc-500 font-mono mt-1">
-          // Add a new portfolio showcase
+          // Manage project categories
         </p>
       </div>
-      <ProjectForm categories={(categories as Category[] | null) || []} />
+      <CategoryManager
+        categories={(categories as Category[] | null) || []}
+      />
     </div>
   );
 }

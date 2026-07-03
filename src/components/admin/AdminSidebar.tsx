@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   FolderKanban,
+  Tag,
   BarChart3,
   Settings,
   LogOut,
@@ -15,6 +16,7 @@ import {
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
+  { href: "/admin/categories", label: "Categories", icon: Tag },
   { href: "/admin/stats", label: "Stats", icon: BarChart3 },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

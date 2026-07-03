@@ -3,15 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
-import type { Project } from "@/types";
-
-const FILTERS = [
-  { key: "all", label: "All Systems" },
-  { key: "ai-ml", label: "AI / ML" },
-  { key: "web", label: "Web Apps" },
-  { key: "mobile", label: "Mobile" },
-  { key: "b2b-erp", label: "B2B / ERP" },
-];
+import type { Project, Category } from "@/types";
 
 const accentHover: Record<string, string> = {
   emerald: "group-hover:text-emerald-400",
@@ -24,19 +16,20 @@ const accentHover: Record<string, string> = {
 
 interface ProjectGridProps {
   projects: Project[];
+  categories: Category[];
 }
 
-export default function ProjectGrid({ projects }: ProjectGridProps) {
+export default function ProjectGrid({ projects, categories }: ProjectGridProps) {
+  const filters = [
+    { key: "all", label: "All Projects" },
+    ...categories.map((cat) => ({ key: cat.slug, label: cat.label })),
+  ];
   const [activeFilter, setActiveFilter] = useState("all");
 
   const filtered =
     activeFilter === "all"
       ? projects
-      : projects.filter((p) =>
-          p.category
-            .split(" ")
-            .some((cat) => cat === activeFilter)
-        );
+      : projects.filter((p) => p.category === activeFilter);
 
   return (
     <section className="py-16" id="portfolio">
@@ -52,7 +45,7 @@ export default function ProjectGrid({ projects }: ProjectGridProps) {
         </div>
 
         <div className="flex flex-wrap gap-2 bg-zinc-900/90 backdrop-blur p-1.5 rounded-xl border border-zinc-800/60 sticky top-4 z-50 shadow-xl self-start">
-          {FILTERS.map((f) => (
+          {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}

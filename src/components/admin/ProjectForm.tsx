@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { createProject, updateProject } from "@/lib/actions";
 import { Upload, X, Save } from "lucide-react";
 import Image from "next/image";
-import type { Project } from "@/types";
+import type { Project, Category } from "@/types";
 
-const CATEGORIES = ["ai-ml", "web", "mobile", "b2b-erp"];
 const COLORS = ["emerald", "blue", "purple", "amber", "cyan", "rose"];
 
 interface ProjectFormProps {
   project?: Project;
+  categories: Category[];
 }
 
-export default function ProjectForm({ project }: ProjectFormProps) {
+export default function ProjectForm({ project, categories }: ProjectFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -101,15 +101,11 @@ export default function ProjectForm({ project }: ProjectFormProps) {
             <option value="" disabled>
               Select category
             </option>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.slug}>
+                {cat.label}
               </option>
             ))}
-            <option value="ai-ml web">AI/ML + Web</option>
-            <option value="ai-ml b2b-erp">AI/ML + B2B/ERP</option>
-            <option value="web b2b-erp">Web + B2B/ERP</option>
-            <option value="mobile web">Mobile + Web</option>
           </select>
         </div>
 

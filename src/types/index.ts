@@ -13,6 +13,13 @@ export interface Project {
   updated_at: string;
 }
 
+export interface Category {
+  id: string;
+  label: string;
+  slug: string;
+  sort_order: number;
+}
+
 export interface Stat {
   id: string;
   label: string;

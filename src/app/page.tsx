@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { Project, Stat, SiteSetting, Service } from "@/types";
+import type { Project, Stat, SiteSetting, Service, Category } from "@/types";
 import Header from "@/components/Header";
 import Skills from "@/components/Skills";
 import Services from "@/components/Services";
@@ -11,11 +11,12 @@ import Footer from "@/components/Footer";
 export const dynamic = "force-dynamic";
 
 async function getData() {
-  const [projectsRes, statsRes, settingsRes, servicesRes] = await Promise.all([
+  const [projectsRes, statsRes, settingsRes, servicesRes, categoriesRes] = await Promise.all([
     supabase.from("projects").select("*").order("sort_order"),
     supabase.from("stats").select("*").order("sort_order"),
     supabase.from("site_settings").select("*"),
     supabase.from("services").select("*").order("sort_order"),
+    supabase.from("categories").select("*").order("sort_order"),
   ]);
 
   const settings: Record<string, string> = {};
@@ -28,11 +29,12 @@ async function getData() {
     stats: (statsRes.data as Stat[] | null) || [],
     settings,
     services: (servicesRes.data as Service[] | null) || [],
+    categories: (categoriesRes.data as Category[] | null) || [],
   };
 }
 
 export default async function HomePage() {
-  const { projects, stats, settings, services } = await getData();
+  const { projects, stats, settings, services, categories } = await getData();
 
   return (
     <>
@@ -45,7 +47,7 @@ export default async function HomePage() {
         <Skills />
         <Services services={services} />
         <StatsCounter stats={stats} />
-        <ProjectGrid projects={projects} />
+        <ProjectGrid projects={projects} categories={categories} />
         <CTA settings={settings} />
         <Footer />
       </div>
