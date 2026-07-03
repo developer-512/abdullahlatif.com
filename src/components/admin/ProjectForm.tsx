@@ -131,6 +131,20 @@ export default function ProjectForm({ project }: ProjectFormProps) {
         </div>
       </div>
 
+      {/* Project Link */}
+      <div>
+        <label className="block text-xs font-mono text-zinc-500 mb-1.5">
+          Project Link
+        </label>
+        <input
+          name="link"
+          type="url"
+          defaultValue={project?.link || ""}
+          className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors"
+          placeholder="e.g. https://example.com"
+        />
+      </div>
+
       {/* Tech Stack */}
       <div>
         <label className="block text-xs font-mono text-zinc-500 mb-1.5">

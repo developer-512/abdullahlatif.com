@@ -5,6 +5,7 @@ export interface Project {
   category: string;
   tech_stack: string[];
   highlights: string[];
+  link: string | null;
   screenshot_url: string | null;
   color_accent: string;
   sort_order: number;

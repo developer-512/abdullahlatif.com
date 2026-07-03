@@ -74,9 +74,12 @@ export default function ProjectGrid({ projects }: ProjectGridProps) {
           .map((project) => {
             const hover = accentHover[project.color_accent] || accentHover.emerald;
             return (
-              <div
+              <a
                 key={project.id}
-                className="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-zinc-700/80 transition-all duration-300 group"
+                href={project.link || undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`bg-zinc-900/30 border border-zinc-800/80 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-zinc-700/80 transition-all duration-300 group ${project.link ? "cursor-pointer" : "cursor-default"}`}
               >
                 <div className="bg-zinc-950 border-b border-zinc-800/80 relative overflow-hidden h-48 flex items-center justify-center">
                   <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:14px_24px]" />
@@ -130,7 +133,7 @@ export default function ProjectGrid({ projects }: ProjectGridProps) {
                     ))}
                   </div>
                 </div>
-              </div>
+              </a>
             );
           })}
       </div>

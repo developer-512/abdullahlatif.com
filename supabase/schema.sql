@@ -12,6 +12,7 @@ create table if not exists projects (
   category text not null,
   tech_stack text[] default '{}',
   highlights text[] default '{}',
+  link text,
   screenshot_url text,
   color_accent text default 'emerald',
   sort_order int default 0,

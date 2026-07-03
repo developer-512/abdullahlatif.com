@@ -48,6 +48,7 @@ export async function createProject(formData: FormData) {
     category: formData.get("category"),
     tech_stack: techStack,
     highlights,
+    link: (formData.get("link") as string) || null,
     screenshot_url: screenshotUrl,
     color_accent: formData.get("color_accent") || "emerald",
     sort_order: Number(formData.get("sort_order")) || 0,
@@ -74,6 +75,7 @@ export async function updateProject(id: string, formData: FormData) {
       .split("\n")
       .map((s) => s.trim())
       .filter(Boolean),
+    link: (formData.get("link") as string) || null,
     color_accent: formData.get("color_accent") || "emerald",
     sort_order: Number(formData.get("sort_order")) || 0,
     updated_at: new Date().toISOString(),
