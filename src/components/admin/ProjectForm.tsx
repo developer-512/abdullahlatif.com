@@ -6,6 +6,7 @@ import { createProject, updateProject } from "@/lib/actions";
 import { Upload, X, Save } from "lucide-react";
 import Image from "next/image";
 import type { Project, Category } from "@/types";
+import { getProjectImages } from "@/types";
 
 const COLORS = ["emerald", "blue", "purple", "amber", "cyan", "rose"];
 
@@ -18,15 +19,34 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [preview, setPreview] = useState<string | null>(
-    project?.screenshot_url || null
+  const [existingImages, setExistingImages] = useState<string[]>(
+    project ? getProjectImages(project) : []
   );
+  const [newPreviews, setNewPreviews] = useState<
+    { id: string; url: string; file: File }[]
+  >([]);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
+  function handleFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    const previews = files.map((file) => ({
+      id: `${file.name}-${file.lastModified}-${Math.random()}`,
+      url: URL.createObjectURL(file),
+      file,
+    }));
+    setNewPreviews((prev) => [...prev, ...previews]);
+    e.target.value = "";
+  }
+
+  function removeExistingImage(url: string) {
+    setExistingImages((prev) => prev.filter((img) => img !== url));
+  }
+
+  function removeNewPreview(id: string) {
+    setNewPreviews((prev) => {
+      const target = prev.find((p) => p.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter((p) => p.id !== id);
+    });
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -36,6 +56,11 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
 
     try {
       const formData = new FormData(e.currentTarget);
+      formData.set("existing_images", JSON.stringify(existingImages));
+      newPreviews.forEach((preview) => {
+        formData.append("screenshots", preview.file);
+      });
+
       if (project) {
         await updateProject(project.id, formData);
       } else {
@@ -48,6 +73,11 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
       setLoading(false);
     }
   }
+
+  const allPreviews = [
+    ...existingImages.map((url) => ({ id: url, url, existing: true })),
+    ...newPreviews.map((p) => ({ id: p.id, url: p.url, existing: false })),
+  ];
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
@@ -182,47 +212,60 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
         />
       </div>
 
-      {/* Screenshot Upload */}
+      {/* Screenshots Upload */}
       <div>
         <label className="block text-xs font-mono text-zinc-500 mb-1.5">
-          Screenshot
+          Screenshots
         </label>
         <div className="border border-dashed border-zinc-800 rounded-xl p-4">
-          {preview ? (
-            <div className="relative w-full h-48 rounded-lg overflow-hidden mb-3">
-              <Image
-                src={preview}
-                alt="Preview"
-                fill
-                className="object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setPreview(null);
-                  const input = document.querySelector(
-                    'input[name="screenshot"]'
-                  ) as HTMLInputElement;
-                  if (input) input.value = "";
-                }}
-                className="absolute top-2 right-2 p-1 bg-black/60 rounded-full text-white hover:bg-red-500/80 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+          {allPreviews.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+              {allPreviews.map((item) => (
+                <div
+                  key={item.id}
+                  className="relative aspect-video rounded-lg overflow-hidden"
+                >
+                  <Image
+                    src={item.url}
+                    alt="Screenshot preview"
+                    fill
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      item.existing
+                        ? removeExistingImage(item.url)
+                        : removeNewPreview(item.id)
+                    }
+                    className="absolute top-2 right-2 p-1 bg-black/60 rounded-full text-white hover:bg-red-500/80 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
             </div>
-          ) : null}
+          )}
           <label className="flex items-center justify-center gap-2 cursor-pointer py-3 text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
             <Upload className="w-4 h-4" />
-            <span>{preview ? "Change image" : "Upload screenshot"}</span>
+            <span>
+              {allPreviews.length > 0
+                ? "Add more images"
+                : "Upload screenshots"}
+            </span>
             <input
-              name="screenshot"
+              name="screenshots"
               type="file"
               accept="image/*"
-              onChange={handleFileChange}
+              multiple
+              onChange={handleFilesChange}
               className="hidden"
             />
           </label>
         </div>
+        <p className="text-[11px] text-zinc-600 font-mono mt-1.5">
+          Multiple images supported — they appear as a slider on the portfolio.
+        </p>
       </div>
 
       {/* Actions */}

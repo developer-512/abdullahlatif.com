@@ -7,6 +7,8 @@ import StatsCounter from "@/components/StatsCounter";
 import ProjectGrid from "@/components/ProjectGrid";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import BackgroundEffects from "@/components/BackgroundEffects";
+import CursorGlow from "@/components/CursorGlow";
 
 export const dynamic = "force-dynamic";
 
@@ -38,11 +40,10 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Glow effects */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-10 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <BackgroundEffects />
+      <CursorGlow />
 
-      <div className="max-w-5xl mx-auto px-6 py-12 md:py-24">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-24">
         <Header settings={settings} />
         <Skills />
         <Services services={services} />

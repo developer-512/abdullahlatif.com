@@ -7,10 +7,18 @@ export interface Project {
   highlights: string[];
   link: string | null;
   screenshot_url: string | null;
+  screenshot_urls?: string[];
   color_accent: string;
   sort_order: number;
   created_at: string;
   updated_at: string;
+}
+
+/** Returns all image URLs for a project (supports legacy single-image field). */
+export function getProjectImages(project: Project): string[] {
+  if (project.screenshot_urls?.length) return project.screenshot_urls;
+  if (project.screenshot_url) return [project.screenshot_url];
+  return [];
 }
 
 export interface Category {

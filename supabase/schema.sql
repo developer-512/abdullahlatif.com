@@ -14,6 +14,7 @@ create table if not exists projects (
   highlights text[] default '{}',
   link text,
   screenshot_url text,
+  screenshot_urls text[] default '{}',
   color_accent text default 'emerald',
   sort_order int default 0,
   created_at timestamptz default now(),

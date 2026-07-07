@@ -11,17 +11,17 @@ async function requireAuth() {
   return session;
 }
 
-// ─── Projects ───
+async function uploadScreenshots(
+  sb: ReturnType<typeof getAdminClient>,
+  formData: FormData
+): Promise<string[]> {
+  const files = formData.getAll("screenshots") as File[];
+  const urls: string[] = [];
 
-export async function createProject(formData: FormData) {
-  await requireAuth();
-  const sb = getAdminClient();
-
-  let screenshotUrl: string | null = null;
-  const file = formData.get("screenshot") as File | null;
-  if (file && file.size > 0) {
+  for (const file of files) {
+    if (!file || file.size === 0) continue;
     const ext = file.name.split(".").pop();
-    const fileName = `${Date.now()}.${ext}`;
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error: uploadError } = await sb.storage
       .from("screenshots")
       .upload(fileName, file, { contentType: file.type, upsert: true });
@@ -29,8 +29,33 @@ export async function createProject(formData: FormData) {
     const { data: urlData } = sb.storage
       .from("screenshots")
       .getPublicUrl(fileName);
-    screenshotUrl = urlData.publicUrl;
+    urls.push(urlData.publicUrl);
   }
+
+  return urls;
+}
+
+function parseExistingImages(formData: FormData): string[] {
+  const raw = formData.get("existing_images") as string;
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((url): url is string => typeof url === "string")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+// ─── Projects ───
+
+export async function createProject(formData: FormData) {
+  await requireAuth();
+  const sb = getAdminClient();
+
+  const screenshotUrls = await uploadScreenshots(sb, formData);
+  const primaryUrl = screenshotUrls[0] ?? null;
 
   const techStack = (formData.get("tech_stack") as string)
     .split(",")
@@ -49,7 +74,8 @@ export async function createProject(formData: FormData) {
     tech_stack: techStack,
     highlights,
     link: (formData.get("link") as string) || null,
-    screenshot_url: screenshotUrl,
+    screenshot_url: primaryUrl,
+    screenshot_urls: screenshotUrls,
     color_accent: formData.get("color_accent") || "emerald",
     sort_order: Number(formData.get("sort_order")) || 0,
   });
@@ -81,19 +107,12 @@ export async function updateProject(id: string, formData: FormData) {
     updated_at: new Date().toISOString(),
   };
 
-  const file = formData.get("screenshot") as File | null;
-  if (file && file.size > 0) {
-    const ext = file.name.split(".").pop();
-    const fileName = `${Date.now()}.${ext}`;
-    const { error: uploadError } = await sb.storage
-      .from("screenshots")
-      .upload(fileName, file, { contentType: file.type, upsert: true });
-    if (uploadError) throw new Error(uploadError.message);
-    const { data: urlData } = sb.storage
-      .from("screenshots")
-      .getPublicUrl(fileName);
-    updates.screenshot_url = urlData.publicUrl;
-  }
+  const existingImages = parseExistingImages(formData);
+  const newUrls = await uploadScreenshots(sb, formData);
+  const screenshotUrls = [...existingImages, ...newUrls];
+
+  updates.screenshot_urls = screenshotUrls;
+  updates.screenshot_url = screenshotUrls[0] ?? null;
 
   const { error } = await sb.from("projects").update(updates).eq("id", id);
   if (error) throw new Error(error.message);

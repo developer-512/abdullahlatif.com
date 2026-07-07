@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
+import { getProjectImages } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Pencil } from "lucide-react";
@@ -37,15 +38,17 @@ export default async function ProjectsListPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {(projects as Project[]).map((project) => (
+          {(projects as Project[]).map((project) => {
+            const thumbnail = getProjectImages(project)[0];
+            return (
             <div
               key={project.id}
               className="flex items-center gap-4 bg-zinc-900/30 border border-zinc-800/60 rounded-xl p-4 hover:border-zinc-700 transition-colors"
             >
               <div className="w-16 h-16 bg-zinc-950 rounded-lg overflow-hidden shrink-0 relative">
-                {project.screenshot_url ? (
+                {thumbnail ? (
                   <Image
-                    src={project.screenshot_url}
+                    src={thumbnail}
                     alt={project.title}
                     fill
                     className="object-cover"
@@ -82,7 +85,8 @@ export default async function ProjectsListPage() {
                 <DeleteProjectButton id={project.id} title={project.title} />
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       )}
     </div>

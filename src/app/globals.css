@@ -18,3 +18,89 @@ body {
   background-color: #22c55e;
   color: #000;
 }
+
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, -30px) scale(1.08); }
+}
+
+@keyframes orb-float-3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(calc(-50% + 25px), calc(-50% - 25px)) scale(1.1); opacity: 0.7; }
+}
+
+@keyframes grid-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(60px, 60px); }
+}
+
+@keyframes particle-1 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+  50% { transform: translate(20px, -30px); opacity: 0.6; }
+}
+
+@keyframes particle-2 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+  50% { transform: translate(-25px, 20px); opacity: 0.5; }
+}
+
+@keyframes particle-3 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.25; }
+  50% { transform: translate(15px, 25px); opacity: 0.55; }
+}
+
+@keyframes particle-4 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.15; }
+  50% { transform: translate(-20px, -15px); opacity: 0.4; }
+}
+
+.animate-orb-float-1 {
+  animation: orb-float-1 20s ease-in-out infinite;
+}
+
+.animate-orb-float-2 {
+  animation: orb-float-2 25s ease-in-out infinite;
+}
+
+.animate-orb-float-3 {
+  animation: orb-float-3 30s ease-in-out infinite;
+}
+
+.animate-grid-drift {
+  animation: grid-drift 40s linear infinite;
+}
+
+.animate-particle-1 {
+  animation: particle-1 8s ease-in-out infinite;
+}
+
+.animate-particle-2 {
+  animation: particle-2 10s ease-in-out infinite;
+}
+
+.animate-particle-3 {
+  animation: particle-3 12s ease-in-out infinite;
+}
+
+.animate-particle-4 {
+  animation: particle-4 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-orb-float-1,
+  .animate-orb-float-2,
+  .animate-orb-float-3,
+  .animate-grid-drift,
+  .animate-particle-1,
+  .animate-particle-2,
+  .animate-particle-3,
+  .animate-particle-4 {
+    animation: none;
+  }
+}

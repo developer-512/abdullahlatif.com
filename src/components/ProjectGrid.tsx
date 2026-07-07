@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import type { Project, Category } from "@/types";
+import { getProjectImages } from "@/types";
+import ImageSlider from "@/components/ImageSlider";
 
 const accentHover: Record<string, string> = {
   emerald: "group-hover:text-emerald-400",
@@ -66,6 +67,7 @@ export default function ProjectGrid({ projects, categories }: ProjectGridProps) 
           .sort((a, b) => a.sort_order - b.sort_order)
           .map((project) => {
             const hover = accentHover[project.color_accent] || accentHover.emerald;
+            const images = getProjectImages(project);
             return (
               <a
                 key={project.id}
@@ -76,19 +78,7 @@ export default function ProjectGrid({ projects, categories }: ProjectGridProps) 
               >
                 <div className="bg-zinc-950 border-b border-zinc-800/80 relative overflow-hidden h-48 flex items-center justify-center">
                   <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:14px_24px]" />
-                  {project.screenshot_url ? (
-                    <Image
-                      src={project.screenshot_url}
-                      alt={project.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  ) : (
-                    <div className="text-zinc-700 font-mono text-sm">
-                      No Screenshot
-                    </div>
-                  )}
+                  <ImageSlider images={images} alt={project.title} />
                 </div>
 
                 <div className="p-6 flex-1 flex flex-col justify-between">
