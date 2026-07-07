@@ -1,14 +1,17 @@
 import { supabase } from "@/lib/supabase";
-import { FolderKanban, BarChart3, Settings, ArrowRight } from "lucide-react";
+import { FolderKanban, BarChart3, Settings, ArrowRight, MousePointerClick } from "lucide-react";
 import Link from "next/link";
+import { getAdminClient } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [projectsRes, statsRes, settingsRes] = await Promise.all([
+  const adminSb = getAdminClient();
+  const [projectsRes, statsRes, settingsRes, clicksRes] = await Promise.all([
     supabase.from("projects").select("id", { count: "exact" }),
     supabase.from("stats").select("id", { count: "exact" }),
     supabase.from("site_settings").select("id", { count: "exact" }),
+    adminSb.from("project_link_clicks").select("id", { count: "exact" }),
   ]);
 
   const cards = [
@@ -33,12 +36,20 @@ export default async function AdminDashboard() {
       icon: Settings,
       color: "purple",
     },
+    {
+      label: "Link Clicks",
+      count: clicksRes.count ?? 0,
+      href: "/admin/analytics",
+      icon: MousePointerClick,
+      color: "amber",
+    },
   ];
 
   const colorMap: Record<string, string> = {
     emerald: "border-emerald-900/40 bg-emerald-950/20 text-emerald-400",
     blue: "border-blue-900/40 bg-blue-950/20 text-blue-400",
     purple: "border-purple-900/40 bg-purple-950/20 text-purple-400",
+    amber: "border-amber-900/40 bg-amber-950/20 text-amber-400",
   };
 
   return (
@@ -50,7 +61,7 @@ export default async function AdminDashboard() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {cards.map((card) => (
           <Link
             key={card.href}

@@ -54,6 +54,50 @@ export interface Service {
   sort_order: number;
 }
 
+export interface ProjectLinkClick {
+  id: string;
+  project_id: string | null;
+  project_title: string | null;
+  destination_url: string;
+  ip_address: string | null;
+  ip_version: string | null;
+  user_agent: string | null;
+  referer: string | null;
+  referrer_domain: string | null;
+  accept_language: string | null;
+  browser_name: string | null;
+  browser_version: string | null;
+  os_name: string | null;
+  os_version: string | null;
+  device_type: string | null;
+  screen_width: number | null;
+  screen_height: number | null;
+  viewport_width: number | null;
+  viewport_height: number | null;
+  client_timezone: string | null;
+  client_language: string | null;
+  country_code: string | null;
+  country_name: string | null;
+  region: string | null;
+  city: string | null;
+  postal_code: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  geo_timezone: string | null;
+  isp: string | null;
+  org: string | null;
+  is_proxy: boolean | null;
+  is_hosting: boolean | null;
+  geo_source: string | null;
+  session_id: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  clicked_at: string;
+}
+
 export const SETTING_KEYS = {
   EMAIL: "email",
   LINKEDIN: "linkedin",

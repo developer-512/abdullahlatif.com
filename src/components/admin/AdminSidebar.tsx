@@ -11,12 +11,14 @@ import {
   Settings,
   LogOut,
   ArrowLeft,
+  MousePointerClick,
 } from "lucide-react";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/categories", label: "Categories", icon: Tag },
+  { href: "/admin/analytics", label: "Analytics", icon: MousePointerClick },
   { href: "/admin/stats", label: "Stats", icon: BarChart3 },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
