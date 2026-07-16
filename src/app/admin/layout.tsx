@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminShell from "@/components/admin/AdminShell";
 import SessionWrapper from "@/components/admin/SessionWrapper";
 
 export default async function AdminLayout({
@@ -14,10 +14,7 @@ export default async function AdminLayout({
 
   return (
     <SessionWrapper>
-      <div className="flex min-h-screen">
-        <AdminSidebar />
-        <main className="flex-1 p-8 overflow-auto">{children}</main>
-      </div>
+      <AdminShell>{children}</AdminShell>
     </SessionWrapper>
   );
 }

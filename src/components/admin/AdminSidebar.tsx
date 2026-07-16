@@ -12,6 +12,7 @@ import {
   LogOut,
   ArrowLeft,
   MousePointerClick,
+  X,
 } from "lucide-react";
 
 const links = [
@@ -23,19 +24,40 @@ const links = [
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export default function AdminSidebar({ open = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-zinc-900/50 border-r border-zinc-800/60 min-h-screen p-6 flex flex-col shrink-0">
+    <aside
+      className={`w-64 bg-zinc-900/50 border-r border-zinc-800/60 min-h-screen p-6 flex flex-col shrink-0 ${
+        open ? "fixed inset-y-0 left-0 z-50 flex" : "hidden"
+      } md:relative md:flex`}
+    >
       <div className="mb-8">
-        <Link
-          href="/"
-          className="text-xs font-mono text-zinc-500 hover:text-emerald-400 transition-colors flex items-center gap-1.5"
-        >
-          <ArrowLeft className="w-3 h-3" />
-          Back to Site
-        </Link>
+        <div className="flex items-start justify-between">
+          <Link
+            href="/"
+            className="text-xs font-mono text-zinc-500 hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+          >
+            <ArrowLeft className="w-3 h-3" />
+            Back to Site
+          </Link>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 text-zinc-500 hover:text-white rounded-lg transition-colors md:hidden"
+              aria-label="Close menu"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
         <h2 className="text-lg font-bold text-white mt-3">Admin Panel</h2>
         <p className="text-xs text-zinc-600 font-mono mt-0.5">
           Portfolio Management
@@ -52,6 +74,7 @@ export default function AdminSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 active
                   ? "bg-emerald-500/10 text-emerald-400 border border-emerald-900/40"

@@ -48,6 +48,12 @@ function parseExistingImages(formData: FormData): string[] {
   }
 }
 
+function parseCategories(formData: FormData): string[] {
+  return (formData.getAll("categories") as string[])
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 // ─── Projects ───
 
 export async function createProject(formData: FormData) {
@@ -67,10 +73,13 @@ export async function createProject(formData: FormData) {
     .map((s) => s.trim())
     .filter(Boolean);
 
+  const categories = parseCategories(formData);
+  if (categories.length === 0) throw new Error("At least one category is required");
+
   const { error } = await sb.from("projects").insert({
     title: formData.get("title"),
     description: formData.get("description"),
-    category: formData.get("category"),
+    categories,
     tech_stack: techStack,
     highlights,
     link: (formData.get("link") as string) || null,
@@ -89,10 +98,13 @@ export async function updateProject(id: string, formData: FormData) {
   await requireAuth();
   const sb = getAdminClient();
 
+  const categories = parseCategories(formData);
+  if (categories.length === 0) throw new Error("At least one category is required");
+
   const updates: Record<string, unknown> = {
     title: formData.get("title"),
     description: formData.get("description"),
-    category: formData.get("category"),
+    categories,
     tech_stack: (formData.get("tech_stack") as string)
       .split(",")
       .map((s) => s.trim())

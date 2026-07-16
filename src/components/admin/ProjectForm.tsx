@@ -6,7 +6,7 @@ import { createProject, updateProject } from "@/lib/actions";
 import { Upload, X, Save } from "lucide-react";
 import Image from "next/image";
 import type { Project, Category } from "@/types";
-import { getProjectImages } from "@/types";
+import { getProjectImages, getProjectCategories } from "@/types";
 
 const COLORS = ["emerald", "blue", "purple", "amber", "cyan", "rose"];
 
@@ -22,9 +22,18 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
   const [existingImages, setExistingImages] = useState<string[]>(
     project ? getProjectImages(project) : []
   );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    project ? getProjectCategories(project) : []
+  );
   const [newPreviews, setNewPreviews] = useState<
     { id: string; url: string; file: File }[]
   >([]);
+
+  function toggleCategory(slug: string) {
+    setSelectedCategories((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
+    );
+  }
 
   function handleFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
@@ -54,8 +63,16 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
     setLoading(true);
     setError("");
 
+    if (selectedCategories.length === 0) {
+      setError("Select at least one category");
+      setLoading(false);
+      return;
+    }
+
     try {
       const formData = new FormData(e.currentTarget);
+      formData.delete("categories");
+      selectedCategories.forEach((slug) => formData.append("categories", slug));
       formData.set("existing_images", JSON.stringify(existingImages));
       newPreviews.forEach((preview) => {
         formData.append("screenshots", preview.file);
@@ -116,27 +133,35 @@ export default function ProjectForm({ project, categories }: ProjectFormProps) {
         />
       </div>
 
-      {/* Category + Color */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* Categories + Color */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-mono text-zinc-500 mb-1.5">
-            Category *
+            Categories *
           </label>
-          <select
-            name="category"
-            required
-            defaultValue={project?.category || ""}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
-          >
-            <option value="" disabled>
-              Select category
-            </option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.slug}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
+          <div className="bg-zinc-950 border border-zinc-800 rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
+            {categories.length === 0 ? (
+              <p className="text-xs text-zinc-600">No categories available.</p>
+            ) : (
+              categories.map((cat) => (
+                <label
+                  key={cat.id}
+                  className="flex items-center gap-2.5 cursor-pointer text-sm text-zinc-300 hover:text-white transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(cat.slug)}
+                    onChange={() => toggleCategory(cat.slug)}
+                    className="rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500/50"
+                  />
+                  {cat.label}
+                </label>
+              ))
+            )}
+          </div>
+          <p className="text-[11px] text-zinc-600 font-mono mt-1.5">
+            Project appears in every selected category on the portfolio.
+          </p>
         </div>
 
         <div>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import type { Project, Category } from "@/types";
-import { getProjectImages } from "@/types";
+import { getProjectImages, getProjectCategories } from "@/types";
 import ImageSlider from "@/components/ImageSlider";
 import { trackProjectClick } from "@/lib/track-client";
 
@@ -31,7 +31,7 @@ export default function ProjectGrid({ projects, categories }: ProjectGridProps) 
   const filtered =
     activeFilter === "all"
       ? projects
-      : projects.filter((p) => p.category === activeFilter);
+      : projects.filter((p) => getProjectCategories(p).includes(activeFilter));
 
   function handleProjectClick(
     e: React.MouseEvent<HTMLAnchorElement>,

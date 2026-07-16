@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
-import { getProjectImages } from "@/types";
+import { getProjectImages, getProjectCategories } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Pencil } from "lucide-react";
@@ -65,10 +65,15 @@ export default async function ProjectsListPage() {
                 <h3 className="text-white font-medium text-sm truncate">
                   {project.title}
                 </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-mono px-2 py-0.5 bg-zinc-950 rounded text-zinc-500">
-                    {project.category}
-                  </span>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  {getProjectCategories(project).map((slug) => (
+                    <span
+                      key={slug}
+                      className="text-[10px] font-mono px-2 py-0.5 bg-zinc-950 rounded text-zinc-500"
+                    >
+                      {slug}
+                    </span>
+                  ))}
                   <span className="text-[10px] text-zinc-600 font-mono">
                     Order: {project.sort_order}
                   </span>

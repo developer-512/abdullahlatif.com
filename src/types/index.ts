@@ -2,7 +2,7 @@ export interface Project {
   id: string;
   title: string;
   description: string;
-  category: string;
+  categories: string[];
   tech_stack: string[];
   highlights: string[];
   link: string | null;
@@ -12,6 +12,15 @@ export interface Project {
   sort_order: number;
   created_at: string;
   updated_at: string;
+}
+
+/** Returns category slugs for a project (supports legacy single-category field). */
+export function getProjectCategories(
+  project: Project & { category?: string }
+): string[] {
+  if (project.categories?.length) return project.categories;
+  if (project.category) return [project.category];
+  return [];
 }
 
 /** Returns all image URLs for a project (supports legacy single-image field). */
