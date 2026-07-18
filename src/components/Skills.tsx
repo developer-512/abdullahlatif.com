@@ -1,4 +1,7 @@
+"use client";
+
 import { Server, Lightbulb, Code2 } from "lucide-react";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export default function Skills() {
   const categories = [
@@ -37,53 +40,85 @@ export default function Skills() {
     },
   ];
 
-  const colorMap: Record<string, { bg: string; border: string; text: string; bar: string; barFade: string }> = {
-    emerald: { bg: "bg-emerald-950/50", border: "border-emerald-900/50", text: "text-emerald-400", bar: "bg-emerald-500", barFade: "bg-emerald-500/80" },
-    blue: { bg: "bg-blue-950/50", border: "border-blue-900/50", text: "text-blue-400", bar: "bg-blue-500", barFade: "bg-blue-500/80" },
-    purple: { bg: "bg-purple-950/50", border: "border-purple-900/50", text: "text-purple-400", bar: "bg-purple-500", barFade: "bg-purple-500/80" },
+  const colorMap: Record<
+    string,
+    { bg: string; border: string; text: string; bar: string; barFade: string }
+  > = {
+    emerald: {
+      bg: "bg-emerald-950/50",
+      border: "border-emerald-900/50",
+      text: "text-emerald-400",
+      bar: "bg-emerald-500",
+      barFade: "bg-emerald-500/80",
+    },
+    blue: {
+      bg: "bg-blue-950/50",
+      border: "border-blue-900/50",
+      text: "text-blue-400",
+      bar: "bg-blue-500",
+      barFade: "bg-blue-500/80",
+    },
+    purple: {
+      bg: "bg-purple-950/50",
+      border: "border-purple-900/50",
+      text: "text-purple-400",
+      bar: "bg-purple-500",
+      barFade: "bg-purple-500/80",
+    },
   };
 
   return (
-    <section className="py-16 border-b border-zinc-800/80">
-      <h2 className="text-xs uppercase tracking-widest text-zinc-500 font-mono mb-10 flex items-center gap-2">
-        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-        Architectural Core Competencies
-      </h2>
+    <section className="py-16 border-b border-zinc-800/80" id="competencies">
+      <ScrollReveal>
+        <h2 className="text-xs uppercase tracking-widest text-zinc-500 font-mono mb-10 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+          Architectural Core Competencies
+        </h2>
+      </ScrollReveal>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {categories.map((cat) => {
+        {categories.map((cat, index) => {
           const c = colorMap[cat.color];
           return (
-            <div
-              key={cat.title}
-              className="p-6 bg-zinc-900/30 border border-zinc-800/60 rounded-2xl"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`p-2 ${c.bg} rounded-lg ${c.text} ${c.border} border`}>
-                  {cat.icon}
-                </div>
-                <h3 className="text-white font-semibold text-base">{cat.title}</h3>
-              </div>
-              <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
-                {cat.description}
-              </p>
-              <div className="space-y-2">
-                {cat.skills.map((skill, i) => (
-                  <div key={skill.name}>
-                    <div className={`flex justify-between text-xs font-mono mb-1 ${i > 0 ? "pt-2" : ""}`}>
-                      <span className="text-zinc-400">{skill.name}</span>
-                      <span className={c.text}>{skill.label}</span>
-                    </div>
-                    <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className={`${i === 0 ? c.bar : c.barFade} h-full`}
-                        style={{ width: `${skill.level}%` }}
-                      />
-                    </div>
+            <ScrollReveal key={cat.title} delay={index * 100}>
+              <div className="p-6 bg-zinc-900/30 border border-zinc-800/60 rounded-2xl h-full hover:border-zinc-700/80 transition-colors duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className={`p-2 ${c.bg} rounded-lg ${c.text} ${c.border} border`}
+                  >
+                    {cat.icon}
                   </div>
-                ))}
+                  <h3 className="text-white font-semibold text-base">
+                    {cat.title}
+                  </h3>
+                </div>
+                <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
+                  {cat.description}
+                </p>
+                <div className="space-y-2">
+                  {cat.skills.map((skill, i) => (
+                    <div key={skill.name}>
+                      <div
+                        className={`flex justify-between text-xs font-mono mb-1 ${
+                          i > 0 ? "pt-2" : ""
+                        }`}
+                      >
+                        <span className="text-zinc-400">{skill.name}</span>
+                        <span className={c.text}>{skill.label}</span>
+                      </div>
+                      <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className={`skill-bar-animate ${
+                            i === 0 ? c.bar : c.barFade
+                          } h-full`}
+                          style={{ width: `${skill.level}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
           );
         })}
       </div>
